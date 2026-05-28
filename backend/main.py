@@ -49,8 +49,15 @@ def health_check():
 @app.get("/debug/env")
 def debug_env():
     import os
+    # Fuzzy match list (secure: only returns key name and value length, never the secret value!)
+    matching_keys = {}
+    for key in os.environ.keys():
+        kl = key.lower()
+        if "open" in kl or "router" in kl or "gpt" in kl or "model" in kl or "llm" in kl or "secret" in kl:
+            matching_keys[key] = len(os.environ[key])
+            
     return {
-        "keys": [key for key in os.environ.keys() if not any(secret in key.lower() for secret in ["key", "secret", "password", "token", "auth", "url"])],
+        "matching_keys": matching_keys,
         "has_openrouter_key": "OPENROUTER_API_KEY" in os.environ,
         "openrouter_key_length": len(os.environ.get("OPENROUTER_API_KEY", "")),
         "has_database_url": "DATABASE_URL" in os.environ,
