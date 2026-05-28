@@ -22,7 +22,7 @@ def get_ai_response(db: Session, chat_id: int, user_message_content: str) -> str
     """
     
     # Retrieve configuration from environment variables
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPEN_ROUTER_API_KEY")
     model_name = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
     api_base = "https://openrouter.ai/api/v1"
     
