@@ -46,6 +46,17 @@ def health_check():
         "message": "AI Chatbot API is online and functional."
     }
 
+@app.get("/debug/env")
+def debug_env():
+    import os
+    return {
+        "keys": [key for key in os.environ.keys() if not any(secret in key.lower() for secret in ["key", "secret", "password", "token", "auth", "url"])],
+        "has_openrouter_key": "OPENROUTER_API_KEY" in os.environ,
+        "openrouter_key_length": len(os.environ.get("OPENROUTER_API_KEY", "")),
+        "has_database_url": "DATABASE_URL" in os.environ,
+        "database_url_length": len(os.environ.get("DATABASE_URL", ""))
+    }
+
 if __name__ == "__main__":
     # Runs the application on http://127.0.0.1:8000
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
