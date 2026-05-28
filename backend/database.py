@@ -2,27 +2,44 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 
-# Define database location: SQLite file named 'chatbot.db' in the backend folder
-DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chatbot.db")
-DATABASE_URL = f"sqlite:///{DB_FILE}"
+# Load local environment files if present
+load_dotenv()
 
-# Create SQLAlchemy engine.
-# Note: connect_args={"check_same_thread": False} is required only for SQLite
-# as it allows multiple threads to access the database concurrently.
-engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+# Read the connection string from the environment.
+# Render will supply this automatically as 'DATABASE_URL'.
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# SessionLocal class will be used to instantiate database sessions
+if not DATABASE_URL:
+    # Fallback to local SQLite file if no cloud database URL is provided
+    DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chatbot.db")
+    DATABASE_URL = f"sqlite:///{DB_FILE}"
+
+# SQLAlchemy requires 'postgresql://' instead of 'postgres://' (Render default prefix)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Configure the connection engine
+if DATABASE_URL.startswith("sqlite"):
+    # SQLite requires check_same_thread=False
+    engine = create_engine(
+        DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+else:
+    # PostgreSQL connection (cloud)
+    engine = create_engine(DATABASE_URL)
+
+# Setup session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Declarative base class that our database models will inherit from
+# Base class for models
 Base = declarative_base()
 
-# Dependency to get the database session for each request.
-# This yields a session and ensures it is closed after the request is finished.
 def get_db():
+    """
+    Dependency to yield db session and close it afterward.
+    """
     db = SessionLocal()
     try:
         yield db
