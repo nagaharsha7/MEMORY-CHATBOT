@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Tailwind v4 custom theme definitions */
+@theme {
+  --color-dark-bg: #0b0f19;
+  --color-dark-card: #161b26;
+  --color-dark-border: #242c3d;
+  --color-dark-sidebar: #0d111d;
+  --color-dark-active: #1f293d;
+  --color-dark-primary: #4f46e5;
+  --color-dark-hover: #4338ca;
+  --color-dark-userBubble: #1e293b;
+  --color-dark-aiBubble: #1e1b4b;
+}
+
+/* Global body styling */
+body {
+  background-color: #0b0f19;
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Custom Scrollbar Styling for Chat Area */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #242c3d;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #323d54;
+}
+
+/* Typing Indicator Dots Animation */
+@keyframes blink {
+  0% { opacity: .2; }
+  20% { opacity: 1; }
+  100% { opacity: .2; }
+}
+
+.typing-dot {
+  animation: blink 1.4s infinite both;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: .2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: .4s;
+}
