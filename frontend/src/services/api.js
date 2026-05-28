@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios pointing to the FastAPI backend port (8000)
 const API = axios.create({
-  baseURL: 'http://127.0.0.1:8000',
+  baseURL: 'https://memory-chatbot.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },
